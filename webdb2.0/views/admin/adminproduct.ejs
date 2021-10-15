@@ -14,13 +14,18 @@
           </ol>
         </nav>
    	  </div>
-
+       <br><br>
+       
+       
+      
+      <div class="col-lg-12" id="ex1_Result1" ></div> 
+	  	<div class="col-lg-12" id="ex1_Result2" ></div> 
       <hr>
       <div class="container">
         <a class="btn btn-default" href="/adminprod/form">+신규등록</a>
-        <a class="btn btn-default" href="/adminprod/putproductform">±상품수정</a>
-        <a class="btn btn-default" href="#">-선택삭제</a>
-          <table class="table table-striped">
+        <a class="btn btn-default" id = "putp" href="/adminprod/list" +>±상품수정및 삭제</a>
+
+          <table class="table table-striped" id = "producttable">
             <thead>
               <tr>
                 <th> 번호 </th>
@@ -36,19 +41,32 @@
             <tbody>
                <% prodata.forEach(function (item, index) { %>
               <tr>
-                <td> <%= item.product_number %> </td>
-                <td> <%= item.product_category %> </td>
-                <td> <%= item.product_company %> </td>
-                <td> <%= item.product_name %> </td>
-                <td> <%= item.product_modelname %> </td>
-                <td> <%= item.product_rdate.toLocaleDateString(); %> </td>
-                <td> <%= item.product_price %> </td>
-                <td> <%= item.product_stock %> </td>
+                <td><%= item.product_number %></td>
+                <td><%= item.product_category %></td>
+                <td><%= item.product_company %></td>
+                <td><%= item.product_name %></td>
+                <td><%= item.product_modelname %></td>
+                <td><%= item.product_rdate.toLocaleDateString(); %></td>
+                <td><%= item.product_price %></td>
+                <td><%= item.product_stock %></td>
               </tr>
               <% }); %>
             </table>
           </div>
 
+          <script>
+            // 테이블의 Row 클릭시 값 가져오기
+            $("#producttable tr").click(function(){ 	
+          
+        // 현재 클릭된 Row(<tr>)
+        var tr = $(this);
+        var td = tr.children();
+
+        // td.eq(index)를 통해 값을 가져올 수도 있다.
+        var selectedproduct = td.eq(0).text();
+        $("#putp").attr("href", "/adminprod/putproductform/?productid='"+selectedproduct+"'");
+        });
+          </script>
   <p>
   <nav aria-label="...">
   <ul class="pagination justify-content-center">
