@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+    <p>
+    <div class="container">  <!-- container class 가 페이지의 컨텐츠영역을 지정 -->
+    <div class="jumbotron" style="width:500px; margin:auto">
+
+    <div class="bm-login-form" style='width:400px; margin-left:auto; margin-right:auto; border:1px'>
+
+      <div class="starter-template">
+        <h5> 회원정보수정</h5> <hr>
+      </div>
+
+      <% prodata.forEach(function (item, index) {
+        %>
+
+     <form name=join onsubmit="return validate()" method=post action="/users/reg">
+       <div class="form-group">
+         <label for="exampleInputEmail1">아이디(이메일로 입력)</label>
+         <input type="email" class="form-control" name="uid" id="uid" aria-describedby="emailHelp" value="<%=item.user_id%>">
+       </div>
+       <div class="form-group">
+         <label for="exampleInputEmail1">이름</label>
+         <input type="text" class="form-control" name="uname" id="uname" value="<%=item.user_name%>">
+       </div>
+       <div class="form-group">
+         <label for="exampleInputEmail1">핸드폰</label>
+         <input type="text" class="form-control" name="uphone" id="uphone" value="<%=item.user_phonenum%>">
+       </div>
+       <div class="form-group">
+         <label for="exampleInputEmail1">주소</label>
+         <input type="text" class="form-control" name="uaddress" id="uaddress" value="<%=item.user_address%>">
+       </div>
+       <div class="form-group">
+        <label for="exampleInputEmail1">마일리지</label>
+        <input type="text" class="form-control" name="umileage" id="umileage" value="<%=item.user_mileage%>">
+      </div>
+       </div>
+
+         <hr>
+         <button type="submit" class="btn btn-primary" formaction="/adminprod/putuser">회원정보수정</button>
+         <button type="submit" class="btn btn-info" formaction="/adminprod/deleteuser">회원강제탈퇴</button>
+      </form>
+
+      <% }); %>
+     </div>
+     </div>
+    </div><!-- /.container -->
+
+ <!-- Footer 영역 -->

@@ -8,6 +8,8 @@ const   multer = require('multer');
 const upload = multer({dest: __dirname + '/../../public/images/uploads/products'});  // 업로드 디렉터리를 설정한다.
 const   router = express.Router();
 const   url = require('url');
+const { query } = require('express');
+const { Console } = require('console');
 
 
 const   db = mysql.createConnection({
@@ -20,50 +22,7 @@ const   db = mysql.createConnection({
 
 //  -----------------------------------  상품리스트 기능 -----------------------------------------
 // (관리자용) 등록된 상품리스트를 브라우져로 출력합니다.
-const AdminPrintProd2 = (req, res) => {
-  let    htmlstream = '';
-  let    htmlstream2 = '';
-  let    sql_str;
-
-       if (req.session.auth && req.session.admin)   {   // 관리자로 로그인된 경우에만 처리한다
-           htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs','utf8');    // 헤더부분
-           htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminbar.ejs','utf8');  // 관리자메뉴
-           htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminproduct.ejs','utf8'); // 괸리자메인화면
-           htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs','utf8');  // Footer
-           
-           sql_str = "SELECT product_number, product_category, product_company, product_name, product_modelname, product_rdate, product_price, product_stock from u19_product order by product_rdate desc;"; // 상품조회SQL
-
-           res.writeHead(200, {'Content-Type':'text/html; charset=utf8'});
-
-           db.query(sql_str, (error, results, fields) => {  // 상품조회 SQL실행
-               if (error) { res.status(562).end("AdminPrintProd: DB query is failed"); }
-               else if (results.length <= 0) {  // 조회된 상품이 없다면, 오류메시지 출력
-                   htmlstream2 = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
-                   res.status(562).end(ejs.render(htmlstream2, { 'title': '알리미',
-                                      'warn_title':'상품조회 오류',
-                                      'warn_message':'조회된 상품이 없습니다. 아래버튼을 누르면 상품등록으로 이동합니다',
-                                      'return_url':'/adminprod/form' }));
-                   }
-              else {  // 조회된 상품이 있다면, 상품리스트를 출력
-                     res.end(ejs.render(htmlstream,  { 'title' : '쇼핑몰site',
-                                                       'logurl': '/users/logout',
-                                                       'loglabel': '로그아웃',
-                                                       'regurl': '/users/profile',
-                                                       'reglabel': req.session.who,
-                                                        prodata : results }));  // 조회된 상품정보
-                 } // else
-           }); // db.query()
-       }
-       else  {  // (관리자로 로그인하지 않고) 본 페이지를 참조하면 오류를 출력
-         htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
-         res.status(562).end(ejs.render(htmlstream, { 'title': '알리미',
-                            'warn_title':'상품등록기능 오류',
-                            'warn_message':'관리자로 로그인되어 있지 않아서, 상품등록 기능을 사용할 수 없습니다.',
-                            'return_url':'/' }));
-       }
-
-};
-
+// 상품 조회기능 추가
 const AdminPrintProd = (req, res) => {
   let    htmlstream = '';
   let    htmlstream2 = '';
@@ -85,7 +44,6 @@ const AdminPrintProd = (req, res) => {
            sql_str = "SELECT product_number, product_category, product_company, product_name, product_modelname, product_rdate, product_price, product_stock from u19_product where product_description like '%" + keyword + "%' or product_company like '%" + keyword + "%' or product_saleform like '%" + keyword + "%' or product_price like '%" + keyword + "%' or product_category like '%" + keyword + "%' order by product_rdate desc;";
            else if(sort == null)
            sql_str = "SELECT product_number, product_category, product_company, product_name, product_modelname, product_rdate, product_price, product_stock from u19_product order by product_rdate desc;";
-           console.log(sql_str);
 
            res.writeHead(200, {'Content-Type':'text/html; charset=utf8'});
 
@@ -119,7 +77,6 @@ const AdminPrintProd = (req, res) => {
 };
 
 router.get('/list', AdminPrintProd);      // 상품리스트를 화면에 출력
-router.get('/list2', AdminPrintProd2);
 
 //  -----------------------------------  상품등록기능 -----------------------------------------
 // 상품등록 입력양식을 브라우져로 출력합니다.
@@ -151,7 +108,6 @@ const PrintAddProductForm = (req, res) => {
 
 // 상품등록 양식에서 입력된 상품정보를 신규로 등록(DB에 저장)합니다.
 const HanldleAddProduct = (req, res) => {  // 상품등록
-  console.log(req.file);
   let    body = req.body;
   let    htmlstream = '';
   let    datestr, y, m, d, regdate;
@@ -197,7 +153,6 @@ const HanldleAddProduct = (req, res) => {  // 상품등록
 // 상품 수정및 삭제 폼 가져오기
 const PrintPutProductForm = (req, res) => {
   const  query = url.parse(req.url, true).query;
-  console.log(query.productid);
   sql_str = "SELECT product_number, product_company, product_name, product_modelname, product_rdate, product_price, product_imgpath, product_description, product_stock, product_saleform, product_discount from u19_product where product_number=" + query.productid + ";";
   let    htmlstream = '';
 
@@ -242,7 +197,6 @@ const PrintPutProductForm = (req, res) => {
 //상품 수정및 삭제 요청시 기능
 const HanldleUpdateProduct = (req, res) => {  // 상품등록
   let    body = req.body;
-  console.log(body);
   let    htmlstream = '';
   let    datestr, y, m, d, regdate;
   let    prodimage = '/images/uploads/products/'; // 상품이미지 저장디렉터리
@@ -251,9 +205,6 @@ const HanldleUpdateProduct = (req, res) => {  // 상품등록
   let    result = { originalName  : picfile.originalname,
                    size : picfile.size     }
   sql_str = 'UPDATE u19_product SET product_category = ?, product_company = ?, product_name = ?, product_modelname = ?, product_rdate = ?, product_price = ?, product_discount = ?, product_stock = ?, product_saleform = ?, product_imgpath = ?, product_description = ? WHERE product_number = ?';
-       console.log(sql_str);     // 이병문 - 개발과정 확인용(추후삭제).
-      
-       console.log("수정요청");
 
        if (req.session.auth && req.session.admin) {
            if (body.itemid == '' || datestr == '') {
@@ -295,9 +246,6 @@ const handleDeleteProduct = (req, res) => {
   let    htmlstream = '';
 
   sql_str = 'DELETE from u19_product WHERE product_number = ?';
-       console.log(sql_str);     // 이병문 - 개발과정 확인용(추후삭제).
-       console.log(body);
-       console.log("수정요청");
 
        if (req.session.auth && req.session.admin) {
            if (body.itemid == '') {
@@ -342,13 +290,24 @@ const AdminPrintUsers = (req, res) => {
   let    htmlstream = '';
   let    htmlstream2 = '';
   let    sql_str;
+  const  query = url.parse(req.url, true).query;
+  const sort = query.sort;
+  const keyword = query.keyword;
 
        if (req.session.auth && req.session.admin)   {   // 관리자로 로그인된 경우에만 처리한다
            htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs','utf8');    // 헤더부분
            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminbar.ejs','utf8');  // 관리자메뉴
            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminuserlist.ejs','utf8'); // 관리자회원리스트메뉴
            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs','utf8');  // Footer
-           sql_str = "SELECT uid, pass, name, phone, address, point from u0_users;"; // 상품조회SQL
+           sql_str = "SELECT user_id, user_pw, user_name, user_phonenum, user_address, user_mileage from u19_user;"; // 상품조회SQL
+
+           if(sort == "up")
+           sql_str = "SELECT user_id, user_pw, user_name, user_phonenum, user_address, user_mileage from u19_user where user_name like '%" + keyword + "%' order by user_name;";
+           else if(sort == "down")
+           sql_str = "SELECT user_id, user_pw, user_name, user_phonenum, user_address, user_mileage from u19_user where user_name like '%" + keyword + "%' order by user_name desc;";
+           else if(sort == null)
+           sql_str = "SELECT user_id, user_pw, user_name, user_phonenum, user_address, user_mileage from u19_user;";
+
 
            res.writeHead(200, {'Content-Type':'text/html; charset=utf8'});
 
@@ -381,9 +340,128 @@ const AdminPrintUsers = (req, res) => {
 
 };
 
+const PrintPutUserForm = (req, res) => {
+  const  query = url.parse(req.url, true).query;
+  sql_str = "SELECT user_id, user_name, user_phonenum, user_address, user_mileage from u19_user where user_id=" + query.userid + ";";
+  let    htmlstream = '';
+
+       if (req.session.auth && req.session.admin) { // 관리자로 로그인된 경우에만 처리한다
+         htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs','utf8');    // 헤더부분
+         htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminbar.ejs','utf8');  // 관리자메뉴
+         htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/put_user_form.ejs','utf8'); // 상품정보입력
+         htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs','utf8');  // Footer
+
+         res.writeHead(200, {'Content-Type':'text/html; charset=utf8'});
+         
+         db.query(sql_str, (error, results, fields) => {  // 상품조회 SQL실행
+          if (error) { res.status(562).end("AdminPrintProd: DB query is failed"); }
+          else if (results.length <= 0) {  // 조회된 상품이 없다면, 오류메시지 출력
+              htmlstream2 = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+              res.status(562).end(ejs.render(htmlstream2, { 'title': '알리미',
+                                 'warn_title':'상품조회 오류',
+                                 'warn_message':'조회된 사용자가 없습니다.',
+                                 'return_url':'/' }));
+              }
+         else {  // 조회된 상품이 있다면, 상품리스트를 출력
+      
+                res.end(ejs.render(htmlstream,  { 'title' : '쇼핑몰site',
+                                                  'logurl': '/users/logout',
+                                                  'loglabel': '로그아웃',
+                                                  'regurl': '/users/profile',
+                                                  'reglabel': req.session.who,
+                                                   prodata : results }));  // 조회된 상품정보
+            } // else
+      }); // db.query()
+
+       }
+       else {
+         htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+         res.status(563).end(ejs.render(htmlstream, { 'title': '알리미',
+                            'warn_title':'상품등록기능 오류',
+                            'warn_message':'관리자로 로그인되어 있지 않아서, 상품등록 기능을 사용할 수 없습니다.',
+                            'return_url':'/' }));
+       }
+};
+
+const HanldleUpdateUser = (req, res) => {  // 상품등록
+  let    body = req.body;
+  let    htmlstream = '';
+  
+  sql_str = 'UPDATE u19_user SET user_mileage = ? WHERE user_id = ?';
+
+       if (req.session.auth && req.session.admin) {
+           if (body.uid == '') {
+             console.log("상품번호가 입력되지 않아 DB에 저장할 수 없습니다.");
+             res.status(563).end('<meta charset="utf-8">상품번호가 입력되지 않아 등록할 수 없습니다');
+          }
+          else {
+
+              db.query(sql_str,
+                    [body.umileage, body.uid], (error, results, fields) => {
+               if (error) {
+                   htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+                   res.status(562).end(ejs.render(htmlstream, { 'title': '알리미',
+                                 'warn_title':'상품등록 오류',
+                                 'warn_message':'db저장오류',
+                                 'return_url':'/' }));
+                } else {
+                   console.log("사용자정보 수정에 성공하였으며, DB에 사용자정보를 업데이트했습니다!");
+                   res.redirect('/adminprod/ulist');
+                }
+           });
+       }
+      }
+     else {
+         htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+         res.status(562).end(ejs.render(htmlstream, { 'title': '알리미',
+                            'warn_title':'유저수정기능 오류',
+                            'warn_message':'관리자로 로그인되어 있지 않아서, 유저수정 기능을 사용할 수 없습니다.',
+                            'return_url':'/' }));
+       }
+};
+
+const HandleDeleteUser = (req, res) => {
+  let    body = req.body;
+  let    htmlstream = '';
+
+  sql_str = "DELETE from u19_user WHERE user_id = '"+body.uid+"';";
+
+       if (req.session.auth && req.session.admin) {
+           if (body.uid == '') {
+             console.log("상품번호가 입력되지 않아 DB에 저장할 수 없습니다.");
+             res.status(563).end('<meta charset="utf-8">상품번호가 입력되지 않아 등록할 수 없습니다');
+          }
+          else {
+              db.query(sql_str,
+                    (error, results, fields) => {
+               if (error) {
+                   htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+                   res.status(562).end(ejs.render(htmlstream, { 'title': '알리미',
+                                 'warn_title':'회원삭제 오류',
+                                 'warn_message':'회원을 삭제할때 DB저장 오류가 발생하였습니다. 원인을 파악하여 재시도 바랍니다',
+                                 'return_url':'/' }));
+                } else {
+                   console.log("상품삭제에 성공하였으며, DB에서 삭제하였습니다.!");
+                   res.redirect('/adminprod/ulist');
+                }
+           });
+       }
+      }
+     else {
+         htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs','utf8');
+         res.status(562).end(ejs.render(htmlstream, { 'title': '알리미',
+                            'warn_title':'상품등록기능 오류',
+                            'warn_message':'관리자로 로그인되어 있지 않아서, 상품등록 기능을 사용할 수 없습니다.',
+                            'return_url':'/' }));
+       }
+};
+
+
 // REST API의 URI와 핸들러를 매핑합니다.
 router.get('/ulist', AdminPrintUsers);      // 회원리스트를 화면에 출력
-
+router.get('/putuserform', PrintPutUserForm);
+router.post('/putuser', HanldleUpdateUser);
+router.post('/deleteuser', HandleDeleteUser);
 
 // --------------- 정보변경 기능을 개발합니다 --------------------
 const   PrintAdminProfile = (req, res) => {

@@ -15,11 +15,20 @@
         </nav>
    	  </div>
 
+       <form action="/adminprod/ulist" method="get">
+        <select id="browsers" name="sort">
+          <option value="up">올림차순</option>
+          <option value="down">내림차순</option>
+      </select>
+      <input type="text" placeholder="검색어 입력" name="keyword">
+      <input type="submit" value="검색">
+    </form>
+   </div>
+
       <hr>
       <div class="container">
-        <a class="btn btn-default" href="#">±회원수정</a>
-        <a class="btn btn-default" href="#">-선택삭제</a>
-          <table class="table table-striped">
+        <a class="btn btn-default" id = "putu" href="/adminprod/ulist">±회원수정및 삭제</a>
+          <table class="table table-striped" id = "user_table">
             <thead>
               <tr>
                 <th> 아이디 </th>
@@ -33,16 +42,29 @@
             <tbody>
                <% prodata.forEach(function (item, index) { %>
               <tr>
-                <td> <%= item.uid %> </td>
+                <td><%=item.user_id%></td>
                 <td> ******** </td>
-                <td> <%= item.name %> </td>
-                <td> <%= item.phone %> </td>
-                <td> <%= item.address %> </td>
-                <td> <%= item.point %> </td>
+                <td><%=item.user_name%></td>
+                <td><%=item.user_phonenum%></td>
+                <td><%=item.user_address%></td>
+                <td><%=item.user_mileage%></td>
               </tr>
               <% }); %>
             </table>
           </div>
+
+          <script>
+            // 테이블의 Row 클릭시 값 가져오기
+            $("#user_table tr").click(function(){ 	
+          
+        // 현재 클릭된 Row(<tr>)
+        var tr = $(this);
+        $(this).css("bgcolor", "#56ffff");
+        var td = tr.children();
+        var selecteduser = td.eq(0).text();
+        $("#putu").attr("href", "/adminprod/putuserform/?userid='"+ selecteduser +"'");
+        });
+          </script>
 
   <p>
   <nav aria-label="...">
