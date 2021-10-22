@@ -138,7 +138,6 @@ const HandleLogin = (req, res) => {
    
    //암호화
    body.pass = crypto.encrypt(body.pass);
-   
    console.log(body.uid);
    console.log(body.pass);
 

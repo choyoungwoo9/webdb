@@ -1,99 +1,175 @@
 <!DOCTYPE html>
- <!--  Content (배너이미지) 부분 -->
-  <div> <img src="/images/admin_banner.png" class="img-fluid" alt="배너이미지" width="100%"> </div>
+<!--  Content (배너이미지) 부분 -->
+<div> <img src="/images/admin_banner.png" class="img-fluid" alt="배너이미지" width="100%"> </div>
 
-  <!-- 컨텐츠(예, 쇼핑몰일경우 판매제품리스트)헤더부분 -->
-   <div class="container-fluid" style="border: solid 20px white; border-radius: 1px">
-     <div class="panel panel-default">
-   	  <div class="panel-heading">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">쇼핑몰</a></li>
-            <li class="breadcrumb-item">관리자</a></li>
-            <li class="breadcrumb-item active" aria-current="page">상품등록관리</li>
-          </ol>
-        </nav>
-   	  </div>
-       <br><br>
-       
-       <div>
+<!-- 컨텐츠(예, 쇼핑몰일경우 판매제품리스트)헤더부분 -->
+<div class="container-fluid" style="border: solid 20px white; border-radius: 1px">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">쇼핑몰</a></li>
+          <li class="breadcrumb-item">관리자</a></li>
+          <li class="breadcrumb-item active" aria-current="page">상품등록관리</li>
+        </ol>
+      </nav>
+    </div>
+    <br><br>
+
+    <div>
+
+
+      <form action="/adminprod/list" method="get">
+        <select id="browsers" name="sort">
+          <option value="name">상품명</option>
+          <option value="modelname">모델명</option>
+          <option value="etc">상세정보및 규격</option>
+        </select>
+        <input type="text" placeholder="검색어 입력" name="keyword">
+        <input type="submit" value="검색">
+      </form>
+    </div>
+
+
+
+    <hr>
+    <div class="container">
+      <a class="btn btn-default" href="/adminprod/form">+신규등록</a>
+      <a class="btn btn-default" id="putp" href="/adminprod/list" +>±상품수정및 삭제</a>
+
         
+      <table class="table table-striped" id="producttable">
+        <thead>
+          <tr id="head">
+            <th> 번호 </th>
+            <th> 제품분류 </th>
+            <th> 제조사 </th>
+            <th> 상품명 </th>
+            <th> 모델명 </th>
+            <th> 등록일 </th>
+            <th> 판매가 </th>
+            <th> 재고량 </th>
+          </tr>
+        </thead>
+        <tbody id="producttbody">
+          <% prodata.forEach(function (item, index) { %>
+            <tr>
+              <td><%= item.product_number %></td>
+              <td>
+                <%= item.product_category %>
+              </td>
+              <td>
+                <%= item.product_company %>
+              </td>
+              <td>
+                <%= item.product_name %>
+              </td>
+              <td>
+                <%= item.product_modelname %>
+              </td>
+              <td>
+                <%= item.product_rdate.toLocaleDateString(); %>
+              </td>
+              <td>
+                <%= item.product_price %>
+              </td>
+              <td>
+                <%= item.product_stock %>
+              </td>
+            </tr>
+            <% }); %>
+      </table>
+    </div>
 
-          <form action="/adminprod/list" method="get">
-            <select id="browsers" name="sort">
-              <option value="name">상품명</option>
-              <option value="modelname">모델명</option>
-              <option value="etc">상세정보및 규격</option>
-          </select>
-          <input type="text" placeholder="검색어 입력" name="keyword">
-          <input type="submit" value="검색">
-        </form>
-       </div>
+    <script>
+      // 테이블의 Row 클릭시 값 가져오기
+      $("#producttbody tr").click(function () {
 
-      
-
-      <hr>
-      <div class="container">
-        <a class="btn btn-default" href="/adminprod/form">+신규등록</a>
-        <a class="btn btn-default" id = "putp" href="/adminprod/list" +>±상품수정및 삭제</a>
-
-          <table class="table table-striped" id = "producttable">
-            <thead>
-              <tr>
-                <th> 번호 </th>
-                <th> 제품분류 </th>
-                <th> 제조사 </th>
-                <th> 상품명 </th>
-                <th> 모델명 </th>
-                <th> 등록일 </th>
-                <th> 판매가 </th>
-                <th> 재고량 </th>
-              </tr>
-            </thead>
-            <tbody>
-               <% prodata.forEach(function (item, index) { %>
-              <tr>
-                <td><%= item.product_number %></td>
-                <td><%= item.product_category %></td>
-                <td><%= item.product_company %></td>
-                <td><%= item.product_name %></td>
-                <td><%= item.product_modelname %></td>
-                <td><%= item.product_rdate.toLocaleDateString(); %></td>
-                <td><%= item.product_price %></td>
-                <td><%= item.product_stock %></td>
-              </tr>
-              <% }); %>
-            </table>
-          </div>
-
-          <script>
-            // 테이블의 Row 클릭시 값 가져오기
-            $("#producttable tr").click(function(){ 	
-          
+       
+        
         // 현재 클릭된 Row(<tr>)
         var tr = $(this);
-        $(this).css("bgcolor", "#56ffff");
         var td = tr.children();
 
-
-        var selectedproduct = td.eq(0).text();
         
-        $("#putp").attr("href", "/adminprod/putproductform/?productid='"+selectedproduct+"'");
-        });
-          </script>
-  <p>
-  <nav aria-label="...">
-  <ul class="pagination justify-content-center">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-    </li>
-      <li class="page-item active" aria-current="page">
-      <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
+        $("#producttbody tr").not(this).removeClass("table table-striped table-bordered table-dark");
+        $(this).addClass("table table-striped table-bordered table-dark");
+        
+        //get으로 보낼 테이블의 값 가져옴
+        var selectedproduct = td.eq(0).text();
+        $("#putp").attr("href", "/adminprod/putproductform/?productid='" + selectedproduct + "'");
+      
+
+      });
+    </script>
+    <p>
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+
+        <% var a=1; if(page==1){%>
+          <!--페이지 1일때 뒤로 넘어가 0 되는일 방지-->
+          <li class="page-item">
+            <% if(sort !=null) {%>
+              <!--sort있을때 Previous하이퍼링크-->
+              <a class="page-link" href="/adminprod/list?sort=<%= sort %>&keyword=<%= key %>&page=<%= a %>">Previous</a>
+              <% }if(sort==null) {%>
+                <!--카테고리검색일때 Previous하이퍼링크-->
+                <a class="page-link" href="/adminprod/list?page=<%= a %>">Previous</a>
+                <% }} %>
+                  <% if(page !=1) {%>
+                    <!--뒤로가는 버튼-->
+                    <% if(sort !=null) {%>
+                      <!--sort있을때 Previous하이퍼링크-->
+                      <a class="page-link"
+                        href="/adminprod/list?sort=<%= sort %>&keyword=<%= key %>&page=<%= page-1 %>">Previous</a>
+                      <% }if(sort==null) {%>
+                        <!--카테고리검색일때 Previous하이퍼링크-->
+                        <a class="page-link" href="/adminprod/list?page=<%= page-1 %>">Previous</a>
+                        <% }} %>
+          </li>
+
+          <!--페이지네이션-->
+          <% for(var i=1; i <=total_page; i++){ %>
+            <% if(sort !=null) {%>
+              <!--sort있을때-->
+              <% if(page==i){ %>
+                <!--현재페이지에 active효과 추가-->
+                <li class="page-item active" aria-current="page"><a class="page-link"
+                    href="/adminprod/list?sort=<%= sort %>&keyword=<%= key %>&page=<%= i %>">
+                    <%= i %>
+                  </a></li>
+                <% }else {%>
+                  <li class="page-item"><a class="page-link"
+                      href="/adminprod/list?sort=<%= sort %>&keyword=<%= key %>&page=<%= i %>">
+                      <%= i %>
+                    </a></li>
+
+                  <% }} else if(sort==null) {%>
+                    <!--sort없을때-->
+                    <% if(page==i){ %>
+                      <!--현재페이지에 active효과 추가-->
+                      <li class="page-item active" aria-current="page"><a class="page-link"
+                          href="/adminprod/list?page=<%= i %>">
+                          <%= i %>
+                        </a></li>
+                      <% }else {%>
+                        <li class="page-item"><a class="page-link" href="/adminprod/list?page=<%= i %>">
+                            <%= i %>
+                          </a></li>
+                        <% }}} %>
+
+                          <li class="page-item">
+                            <% if(page==total_page) page-- %>
+                              <!--마지막페이지에서next안넘어감-->
+                              <% if(sort !=null) {%>
+                                <!--sort있을때 next하이퍼링크-->
+                                <a class="page-link"
+                                  href="/adminprod/list?sort=<%= sort %>&keyword=<%= key %>&page=<%= 1*page+1 %>">Next</a>
+                                <% }if(sort==null) {%>
+                                  <!--sort없을때 next하이퍼링크-->
+                                  <a class="page-link" href="/adminprod/list?page=<%= (1*page)+1 %>">Next</a>
+                                  <% } %>
+                          </li>
+
+      </ul>
+    </nav>

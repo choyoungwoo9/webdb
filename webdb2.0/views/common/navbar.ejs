@@ -25,7 +25,14 @@
             <div class="dropdown-divider"></div>
            <a class="dropdown-item" href="/product/list/?category=fridge">냉장고</a>
           </div>
+        
+        </form>
       </li>
-    </ul>
+      <li class="nav-item">
+      <form action="/product/list?category=search" method="get">
+        <input type="text" placeholder="검색어 입력" name="keyword">
+        <input type="submit" value="검색">
+      </li>
+      </ul>
    </div>
  </nav>

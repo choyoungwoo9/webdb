@@ -39,7 +39,7 @@
                 <th> 포인트 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id = "user_tbody">
                <% prodata.forEach(function (item, index) { %>
               <tr>
                 <td><%=item.user_id%></td>
@@ -55,30 +55,88 @@
 
           <script>
             // 테이블의 Row 클릭시 값 가져오기
-            $("#user_table tr").click(function(){ 	
+            $("#user_tbody tr").click(function(){ 	
           
         // 현재 클릭된 Row(<tr>)
         var tr = $(this);
-        $(this).css("bgcolor", "#56ffff");
         var td = tr.children();
+
+        $("#user_tbody tr").not(this).removeClass("table table-striped table-bordered table-dark");
+        $(this).addClass("table table-striped table-bordered table-dark");
+
         var selecteduser = td.eq(0).text();
         $("#putu").attr("href", "/adminprod/putuserform/?userid='"+ selecteduser +"'");
         });
           </script>
 
   <p>
-  <nav aria-label="...">
-  <ul class="pagination justify-content-center">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-    </li>
-      <li class="page-item active" aria-current="page">
-      <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-</nav>
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+
+        <% var a=1; if(page==1){%>
+          <!--페이지 1일때 뒤로 넘어가 0 되는일 방지-->
+          <li class="page-item">
+            <% if(sort !=null) {%>
+              <!--sort있을때 Previous하이퍼링크-->
+              <a class="page-link" href="/adminprod/ulist?sort=<%= sort %>&keyword=<%= key %>&page=<%= a %>">Previous</a>
+              <% }if(sort==null) {%>
+                <!--카테고리검색일때 Previous하이퍼링크-->
+                <a class="page-link" href="/adminprod/ulist?page=<%= a %>">Previous</a>
+                <% }} %>
+                  <% if(page !=1) {%>
+                    <!--뒤로가는 버튼-->
+                    <% if(sort !=null) {%>
+                      <!--sort있을때 Previous하이퍼링크-->
+                      <a class="page-link"
+                        href="/adminprod/ulist?sort=<%= sort %>&keyword=<%= key %>&page=<%= page-1 %>">Previous</a>
+                      <% }if(sort==null) {%>
+                        <!--카테고리검색일때 Previous하이퍼링크-->
+                        <a class="page-link" href="/adminprod/ulist?page=<%= page-1 %>">Previous</a>
+                        <% }} %>
+          </li>
+
+          <!--페이지네이션-->
+          <% for(var i=1; i <=total_page; i++){ %>
+            <% if(sort !=null) {%>
+              <!--sort있을때-->
+              <% if(page==i){ %>
+                <!--현재페이지에 active효과 추가-->
+                <li class="page-item active" aria-current="page"><a class="page-link"
+                    href="/adminprod/ulist?sort=<%= sort %>&keyword=<%= key %>&page=<%= i %>">
+                    <%= i %>
+                  </a></li>
+                <% }else {%>
+                  <li class="page-item"><a class="page-link"
+                      href="/adminprod/ulist?sort=<%= sort %>&keyword=<%= key %>&page=<%= i %>">
+                      <%= i %>
+                    </a></li>
+
+                  <% }} else if(sort==null) {%>
+                    <!--sort없을때-->
+                    <% if(page==i){ %>
+                      <!--현재페이지에 active효과 추가-->
+                      <li class="page-item active" aria-current="page"><a class="page-link"
+                          href="/adminprod/ulist?page=<%= i %>">
+                          <%= i %>
+                        </a></li>
+                      <% }else {%>
+                        <li class="page-item"><a class="page-link" href="/adminprod/ulist?page=<%= i %>">
+                            <%= i %>
+                          </a></li>
+                        <% }}} %>
+
+                          <li class="page-item">
+                            <% if(page==total_page) page-- %>
+                              <!--마지막페이지에서next안넘어감-->
+                              <% if(sort !=null) {%>
+                                <!--sort있을때 next하이퍼링크-->
+                                <a class="page-link"
+                                  href="/adminprod/ulist?sort=<%= sort %>&keyword=<%= key %>&page=<%= 1*page+1 %>">Next</a>
+                                <% }if(sort==null) {%>
+                                  <!--sort없을때 next하이퍼링크-->
+                                  <a class="page-link" href="/adminprod/ulist?page=<%= (1*page)+1 %>">Next</a>
+                                  <% } %>
+                          </li>
+
+      </ul>
+    </nav>

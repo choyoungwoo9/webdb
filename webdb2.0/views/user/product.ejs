@@ -39,16 +39,46 @@
   <p>
   <nav aria-label="...">
   <ul class="pagination justify-content-center">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-    </li>
-      <li class="page-item active" aria-current="page">
-      <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <% var a=1; if(page == 1){%> <!--첫페이지에서 뒤로 안넘어감-->
     <li class="page-item">
-      <a class="page-link" href="#">Next</a>
+      <% if(category == '상품검색') {%> <!--키워드검색일때 Previous하이퍼링크-->
+      <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= a %>">Previous</a>
+      <% }if(key ==undefined) {%> <!--카테고리검색일때 Previous하이퍼링크-->
+      <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= a %>">Previous</a>
+      <% }} %>
+      <% if(page != 1) {%> <!--페이지 1일때 뒤로 넘어가 0 되는일 방지-->
+      <% if(category == '상품검색') {%> <!--키워드검색일때 Previous하이퍼링크-->
+        <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= page-1 %>">Previous</a>
+        <% }if(key ==undefined) {%> <!--카테고리검색일때 Previous하이퍼링크-->
+        <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= page-1 %>">Previous</a>
+        <% }} %>
+    </li>
+    <!--페이지네이션-->
+    <% for(var i = 1; i <= total_page; i++){ %>
+      <% if(category == '상품검색') {%> <!--키워드검색-->
+        <% if(page == i){ %> <!--현재페이지에 active효과 추가-->
+    <li class="page-item active" aria-current="page"><a class="page-link" 
+      href="/product/list?keyword=<%= key %>&page=<%= i %>"><%= i %></a></li>
+      <% }else {%>
+      <li class="page-item"><a class="page-link" 
+        href="/product/list?keyword=<%= key %>&page=<%= i %>"><%= i %></a></li>
+
+      <% }}if(key ==undefined) {%> <!--카테고리검색-->
+        <% if(page == i){ %> <!--현재페이지에 active효과 추가-->
+        <li class="page-item active" aria-current="page"><a class="page-link" 
+          href="/product/list?category=<%= category_name %>&page=<%= i %>"><%= i %></a></li>
+          <% }else {%>
+      <li class="page-item"><a class="page-link" 
+        href="/product/list?category=<%= category_name %>&page=<%= i %>"><%= i %></a></li>
+    <% }}} %>
+    
+    <li class="page-item">
+      <% if(page == total_page) page-- %> <!--마지막페이지에서next안넘어감-->
+      <% if(category == '상품검색') {%> <!--키워드검색일때 next하이퍼링크-->
+      <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= 1*page+1 %>">Next</a>
+      <% }if(key ==undefined) {%> <!--카테고리검색일때 next하이퍼링크-->
+      <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= (1*page)+1 %>">Next</a>
+      <% } %>
     </li>
   </ul>
 </nav>

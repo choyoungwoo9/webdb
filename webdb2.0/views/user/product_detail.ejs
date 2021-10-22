@@ -2,44 +2,80 @@
 
 <div class="container">
   <% prodata.forEach(function (item, index) { %>
-  <div style="float: none; margin:100 auto;" class="row">
-    <div class="col-6" >
-      <div class="card" style="height:500px;">
-        <div class="card-header">
-          상품 이미지
-        </div> 
-        <img class="card-img-top" src="<%= item.product_imgpath %>" alt="" />
-      </div>
-      
-    </div>
-    <div class="col-6">
-      <div class="card" style="height:500px; ">
-        <div class="card-header">
-          상세정보및 구매하기
-        </div>
-        <div class="card-body" >
-          <h5 class="card-title"><%=item.product_name%></h5></br>
-          <h7 class="card-title">모델명 : <%=item.product_modelname%></h7></br>
-          <h7 class="card-title">회사명 : <%=item.product_company%></h7><br>
-          <h7 class="card-title">가격 : <%=item.product_price%></h7>
-          <p style = 'margin:20px 20px;' class="card-text"><%=item.product_description%>
-          </p>
-          <div style="align-self: center;">
-          <textarea class="form-control col-6" rows="1">현재 마일리지 : <%=item.product_price%></textarea>
-          <textarea class="form-control col-6" rows="1">구매 후 마일리지 : <%=item.product_price%></textarea>
+    <div style="float: none; margin:100 auto;" class="row">
+      <div class="col-6">
+        <div class="card" style="height:500px;">
+          <div class="card-header">
+            상품 이미지
           </div>
-          <a href="/" class="btn btn-primary">구매하기</a>
+          <img class="card-img-top" src="<%= item.product_imgpath %>" alt="" />
+        </div>
+
+      </div>
+      <div class="col-6">
+        <div class="card" style="height:500px; ">
+          <div class="card-header">
+            상세정보및 구매하기
+          </div>
+
+          <form accept-charset="UTF-8" role="form" method="post" action="/users/auth">
+          </form>
+
+          <form method="post" action="/product/buy">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%=item.product_name%>
+              </h5></br>
+              <h7 class="card-title">모델명 : <%=item.product_modelname%>
+              </h7></br>
+              <h7 class="card-title">회사명 : <%=item.product_company%>
+              </h7><br>
+              <div class="form-group">
+              <h7  class="card-title">가격 : <%=item.product_price%>
+              </h7>
+            </div>
+              <p style='margin:20px 20px;' class="card-text">
+                <%=item.product_description%>
+              </p>
+              <form>
+                <input type=text name=amount value=1>
+                <input type=text name=restmileage2 value=<%=u_mileage- item.product_price%>>
+                <input type=hidden name=price value=<%=item.product_price%>>
+                <input type=text class="form-control col-6" name =restmileage3 rows="1" value = "<%=u_mileage - item.product_price%>">
+                <input type=button value="증가" 
+                onClick="javascript:this.form.amount.value++; 
+                javascript:this.form.restmileage2.value-=this.form.price.value;
+                javascript:this.form.restmileage3.value= 1*this.form.restmileage3.value- 1*this.form.price.value;">
+                <input type=button value="감소"
+                onClick="javascript:this.form.amount.value--; 
+                javascript:this.form.restmileage2.value= 1*this.form.restmileage2.value+ 1*this.form.price.value;
+                javascript:this.form.restmileage3.value= 1*this.form.restmileage3.value+ 1*this.form.price.value;">
+                
+
+              <div style="align-self: center;">
+                <textarea class="form-control col-6" rows="1">현재 마일리지 : <%=u_mileage%></textarea>
+                <textarea class="form-control col-6" rows="1">구매 후 마일리지 : <%=u_mileage - item.product_price%></textarea>
+                
+              </div>
+
+            </form>
+              <div class="form-group">
+                <input name="p_name" value="<%=item.product_number%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
+                <input name="p_price" value="<%=item.product_price%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
+                <input name="u_mileage" value="<%=u_mileage%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
+            </div>
+
+              <div class="form-group">
+              <button type="submit" class="btn btn-primary">구매하기</button>
+              </div>
+          </form>
+
         </div>
       </div>
     </div>
-  </div>
-  <% }); %>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-
-
-
-
-
+<% }); %>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
