@@ -486,6 +486,7 @@ const HanldleUpdateUser = (req, res) => {  // 상품등록
       db.query(sql_str,
         [body.umileage, body.uid], (error, results, fields) => {
           if (error) {
+            console.log(error);
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs', 'utf8');
             res.status(562).end(ejs.render(htmlstream, {
               'title': '알리미',
@@ -526,6 +527,7 @@ const HandleDeleteUser = (req, res) => {
       db.query(sql_str,
         (error, results, fields) => {
           if (error) {
+            console.log(error);
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs', 'utf8');
             res.status(562).end(ejs.render(htmlstream, {
               'title': '알리미',

@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const router = express.Router();
-const crypto = require('./crypto') 
+const crypto = require('./crypto')
 
 //암호화모듈 추출
 
@@ -22,7 +22,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 //  -----------------------------------  회원가입기능 -----------------------------------------
 // 회원가입 입력양식을 브라우져로 출력합니다.
 const PrintRegistrationForm = (req, res) => {
-  
+
    let htmlstream = '';
 
    htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
@@ -54,7 +54,7 @@ const PrintRegistrationForm = (req, res) => {
 
 // 회원가입 양식에서 입력된 회원정보를 신규등록(DB에 저장)합니다.
 const HandleRegistration = (req, res) => {  // 회원가입
-   
+
    let body = req.body;
    let htmlstream = '';
 
@@ -135,7 +135,7 @@ const HandleLogin = (req, res) => {
    let userid, userpass, username;
    let sql_str;
    let htmlstream = '';
-   
+
    //암호화
    body.pass = crypto.encrypt(body.pass);
    console.log(body.uid);
@@ -191,33 +191,60 @@ const HandleLogout = (req, res) => {
 const PrintProfile = (req, res) => {
    let htmlstream = '';
 
-   htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
-   htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/navbar.ejs', 'utf8');
-   htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/user/change_user_info.ejs', 'utf8');
-   htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs', 'utf8');
-   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf8' });
+   sql_str = "SELECT user_phonenum, user_address from u19_user where user_id='" + req.session.userid + "';";
+   console.log(sql_str);
 
-   if (req.session.auth) {  // true :로그인된 상태,  false : 로그인안된 상태
-      res.end(ejs.render(htmlstream, {
-         'title': '쇼핑몰site',
-         'logurl': '/users/logout',
-         'loglabel': '로그아웃',
-         'regurl': '/users/profile',
-         'reglabel': req.session.who
-      }));
-   }
-   else {
-      res.end(ejs.render(htmlstream, {
-         'title': '쇼핑몰site',
-         'logurl': '/users/auth',
-         'loglabel': '로그인',
-         'regurl': '/users/reg',
-         'reglabel': '가입'
-      }));
-   }
+   var phonenum;
+   var address;
+   db.query(sql_str, (error, results, fields) => {
+      if (error) { res.status(562).end("AdminPrintProd: DB query is failed"); }
+      else{
+         console.log(results);
+         phonenum = results[0].user_phonenum;
+         address = results[0].user_address; 
+
+         if (req.session.who != "깐부관리자") {
+            htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/navbar.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/user/change_user_info.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs', 'utf8');
+         }
+         else {
+            htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminbar.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/user/change_user_info.ejs', 'utf8');
+            htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs', 'utf8');
+         }
+         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf8' });
+      
+         if (req.session.auth) {  // true :로그인된 상태,  false : 로그인안된 상태
+            res.end(ejs.render(htmlstream, {
+               'title': '쇼핑몰site',
+               'logurl': '/users/logout',
+               'loglabel': '로그아웃',
+               'regurl': '/users/profile',
+               'address':address,
+               'phone':phonenum,
+               'reglabel': req.session.who
+            }));
+         }
+         else {
+            res.end(ejs.render(htmlstream, {
+               'title': '쇼핑몰site',
+               'logurl': '/users/auth',
+               'loglabel': '로그인',
+               'regurl': '/users/reg',
+               'reglabel': '가입'
+            }));
+         }
+         
+      }});
+      
+   
+      
 };
 
-const HandleProfile = (req, res) => {  
+const HandleProfile = (req, res) => {
 
    let body = req.body;
    let htmlstream = '';

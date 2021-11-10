@@ -38,27 +38,28 @@
                 <%=item.product_description%>
               </p>
               <form>
-                <input type=text name=amount value=1>
-                <input type=text name=restmileage2 value=<%=u_mileage- item.product_price%>>
-                <input type=hidden name=price value=<%=item.product_price%>>
-                <input type=text class="form-control col-6" name =restmileage3 rows="1" value = "<%=u_mileage - item.product_price%>">
+                <input type=text class="form-control col-6" name=amount value=1>
                 <input type=button value="증가" 
-                onClick="javascript:this.form.amount.value++; 
-                javascript:this.form.restmileage2.value-=this.form.price.value;
-                javascript:this.form.restmileage3.value= 1*this.form.restmileage3.value- 1*this.form.price.value;">
+                onClick="javascript:this.form.amount.value++;                
+                javascript:this.form.hidden_restmileage.value= 1*this.form.hidden_restmileage.value- 1*this.form.price.value;
+                javascript:this.form.restmileage.value='구매 후 마일리지:' +this.form.hidden_restmileage.value;">
+                
+                <!--1일때 감소클릭시 0으로 줄어들지 않게끔 처리-->
                 <input type=button value="감소"
-                onClick="javascript:this.form.amount.value--; 
-                javascript:this.form.restmileage2.value= 1*this.form.restmileage2.value+ 1*this.form.price.value;
-                javascript:this.form.restmileage3.value= 1*this.form.restmileage3.value+ 1*this.form.price.value;">
-                
-
-              <div style="align-self: center;">
-                <textarea class="form-control col-6" rows="1">현재 마일리지 : <%=u_mileage%></textarea>
-                <textarea class="form-control col-6" rows="1">구매 후 마일리지 : <%=u_mileage - item.product_price%></textarea>
-                
-              </div>
+                onClick="
+                javascript:this.form.amount.value--; 
+                javascript:if(this.form.amount.value==0)this.form.amount.value=1;
+                javascript:this.form.hidden_restmileage.value= 1*this.form.hidden_nowmileage.value- 1*this.form.amount.value*1*this.form.hidden_price.value;
+                javascript:this.form.restmileage.value='구매 후 마일리지: ' +this.form.hidden_restmileage.value;">
+                <input type=hidden name=price value=<%=item.product_price%>>
+                <input type=hidden class="form-control col-6" name=hidden_nowmileage rows="1" value = "<%=u_mileage%>">
+                <input type=hidden class="form-control col-6" name=hidden_price rows="1" value = "<%=item.product_price%>">
+                <input type=text class="form-control col-6" name=nowmileage rows="1" value = "현재 마일리지: <%=u_mileage%>">
+                <input type=hidden class="form-control col-6" name =hidden_restmileage rows="1" value = "<%=u_mileage - item.product_price%>">
+                <input type=text class="form-control col-6" name =restmileage rows="1" value = "구매 후 마일리지: <%=u_mileage - item.product_price%>">
 
             </form>
+            <!--서버에 제출용-->
               <div class="form-group">
                 <input name="p_name" value="<%=item.product_number%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
                 <input name="p_price" value="<%=item.product_price%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
