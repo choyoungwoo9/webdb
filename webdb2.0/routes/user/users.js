@@ -58,23 +58,21 @@ const HandleRegistration = (req, res) => {  // 회원가입
    let body = req.body;
    let htmlstream = '';
 
-   //암호화
+   //비밀번호 암호화
    body.pw1 = crypto.encrypt(body.pw1);
 
-   console.log(body.uid);     // 임시로 확인하기 위해 콘솔에 출력해봅니다.
-   console.log(body.uname);
-   console.log(body.pw1);
-
-
+   //아이디와 비번이 입력되지 않았을 경우
    if (body.uid == '' || body.pw1 == '') {
       console.log("데이터입력이 되지 않아 DB에 저장할 수 없습니다.");
       res.status(600).end('<meta charset="utf-8">데이터가 입력되지 않아 가입을 할 수 없습니다');
    }
+   //정상적으로 입력이 되었을 경우
    else {
 
+      //입력한 회원정보 삽입
       db.query('INSERT INTO u19_user (user_id, user_pw, user_name, user_phonenum, user_address, user_mileage) VALUES (?, ?, ?, ?, ?, ?)', [body.uid, body.pw1, body.uname, body.uphone, body.uaddress, 1000000], (error, results, fields) => {
+         //이미 회원으로 등록된 아이디가 있을경우
          if (error) {
-            console.log(db.query);
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs', 'utf8');
             res.status(600).end(ejs.render(htmlstream, {
                'title': '알리미',
@@ -98,7 +96,7 @@ router.get('/', function (req, res) { res.send('respond with a resource 111'); }
 
 // ------------------------------------  로그인기능 --------------------------------------
 
-// 로그인 화면을 웹브라우져로 출력합니다.
+// 로그인 폼을 웹브라우져로 출력함
 const PrintLoginForm = (req, res) => {
    let htmlstream = '';
 
@@ -138,18 +136,17 @@ const HandleLogin = (req, res) => {
 
    //암호화
    body.pass = crypto.encrypt(body.pass);
-   console.log(body.uid);
-   console.log(body.pass);
 
-
+   //아이디나 패스워드를 작성하지 않은경우
    if (body.uid == '' || body.pass == '') {
       console.log("아이디나 암호가 입력되지 않아서 로그인할 수 없습니다.");
       res.status(601).end('<meta charset="utf-8">아이디나 암호가 입력되지 않아서 로그인할 수 없습니다.');
    }
    else {
+      //아이디가 존재하는지, 패스워드와 일치하는지 확인함
       sql_str = "SELECT user_id, user_pw, user_name from u19_user where user_id ='" + body.uid + "' and user_pw='" + body.pass + "';";
-      console.log("SQL: " + sql_str);
       db.query(sql_str, (error, results, fields) => {
+         //DB오류가 생긴 경우
          if (error) { res.status(601).end("Login Fail as No id in DB!"); }
          else {
             if (results.length <= 0) {  // select 조회결과가 없는 경우 (즉, 등록계정이 없는 경우)
@@ -188,27 +185,30 @@ const HandleLogout = (req, res) => {
 
 
 // --------------- 정보변경 기능을 개발합니다 --------------------
+//정보변경폼 출력
 const PrintProfile = (req, res) => {
    let htmlstream = '';
 
+   //placeholder를 위해 유저정보 미리 받음
    sql_str = "SELECT user_phonenum, user_address from u19_user where user_id='" + req.session.userid + "';";
-   console.log(sql_str);
 
-   var phonenum;
-   var address;
+   var phonenum;//휴대폰번호 저장
+   var address;//주소 저장
+   //유저정보 찾음
    db.query(sql_str, (error, results, fields) => {
       if (error) { res.status(562).end("AdminPrintProd: DB query is failed"); }
       else{
-         console.log(results);
          phonenum = results[0].user_phonenum;
          address = results[0].user_address; 
 
+         //정보변경을 관리자가 할경우의 화면
          if (req.session.who != "깐부관리자") {
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
             htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/navbar.ejs', 'utf8');
             htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/user/change_user_info.ejs', 'utf8');
             htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/common/footer.ejs', 'utf8');
          }
+         //정보변경을 사용자가 할 경우의 화면
          else {
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/header.ejs', 'utf8');
             htmlstream = htmlstream + fs.readFileSync(__dirname + '/../../views/admin/adminbar.ejs', 'utf8');
@@ -244,24 +244,23 @@ const PrintProfile = (req, res) => {
       
 };
 
+//정보변경의 실제 동작
 const HandleProfile = (req, res) => {
 
    let body = req.body;
    let htmlstream = '';
-   console.log(req.session);
-   console.log(body.uphone);
-   console.log(body.uaddress);
 
+   //비밀번호 암호화
    body.pw1 = crypto.encrypt(body.pw1);
-   console.log(body.pw1);
 
+   //비밀번호가 입력되지 않았을경우
    if (body.pw1 == '' || body.pw2 == '') {
-      console.log("데이터입력이 되지 않아 DB에 저장할 수 없습니다.");
       res.status(600).end('<meta charset="utf-8">바꿀 비밀번호를 입력하세요');
    }
    else {
-
+      //유저정보 업데이트함
       db.query('UPDATE u19_user SET user_pw = ?, user_phonenum = ?, user_address = ? WHERE user_id = ?', [body.pw1, body.uphone, body.uaddress, req.session.userid], (error, results, fields) => {
+         //업데이트할 정보가 잘못됬을경우
          if (error) {
             htmlstream = fs.readFileSync(__dirname + '/../../views/common/alert.ejs', 'utf8');
             res.status(600).end(ejs.render(htmlstream, {
@@ -270,6 +269,7 @@ const HandleProfile = (req, res) => {
                'warn_message': '회원정보수정을 할수 없습니다. 모든 정보를 입력해 주세요.',
                'return_url': '/'
             }));
+            //성공했을경우
          } else {
             console.log("정보수정에 성공하였으며, DB에 수정된 내용을 등록하였습니다.!");
             res.redirect('/');

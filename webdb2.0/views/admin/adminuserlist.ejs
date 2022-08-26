@@ -15,6 +15,17 @@
         </nav>
    	  </div>
 
+       <div class="dropdown">
+
+        <button class="btn  btn-dark  dropdown-toggle float-right" data-toggle="dropdown">
+          이름순 정렬
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="/adminprod/ulist/?sort=namesort">이름순 정렬</a>
+          <a class="dropdown-item" href="/adminprod/ulist/?sort=salessort">매출순 정렬</a>
+        </div>
+      </div>
+
        <form action="/adminprod/ulist" method="get">
         <select id="browsers" name="sort">
           <option value="up">올림차순</option>
@@ -27,7 +38,7 @@
 
       <hr>
       <div class="container">
-        <a class="btn btn-default" id = "putu" href="/adminprod/ulist">±회원수정및 삭제</a>
+        <a class="btn btn-primary" id = "putu" href="/adminprod/ulist">±회원수정및 삭제</a>
           <table class="table table-striped" id = "user_table">
             <thead>
               <tr>
@@ -37,6 +48,7 @@
                 <th> 핸드폰 </th>
                 <th> 주소 </th>
                 <th> 포인트 </th>
+                <th> 총 구매금액 </th>
               </tr>
             </thead>
             <tbody id = "user_tbody">
@@ -48,6 +60,7 @@
                 <td><%=item.user_phonenum%></td>
                 <td><%=item.user_address%></td>
                 <td><%=item.user_mileage%></td>
+                <td><%=item.sum%></td>
               </tr>
               <% }); %>
             </table>

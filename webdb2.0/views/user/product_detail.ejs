@@ -8,12 +8,12 @@
           <div class="card-header">
             상품 이미지
           </div>
-          <img class="card-img-top" src="<%= item.product_imgpath %>" alt="" />
+          <img class="card-img-top" height="400px" width="400px" src="<%= item.product_imgpath %>" alt="" />
         </div>
 
       </div>
       <div class="col-6">
-        <div class="card" style="height:500px; ">
+        <div class="card text-center" style="height:500px; ">
           <div class="card-header">
             상세정보및 구매하기
           </div>
@@ -23,9 +23,9 @@
 
           <form method="post" action="/product/buy">
             <div class="card-body">
-              <h5 class="card-title">
+              <h2 class="card-title">
                 <%=item.product_name%>
-              </h5></br>
+              </h2>
               <h7 class="card-title">모델명 : <%=item.product_modelname%>
               </h7></br>
               <h7 class="card-title">회사명 : <%=item.product_company%>
@@ -34,11 +34,11 @@
               <h7  class="card-title">가격 : <%=item.product_price%>
               </h7>
             </div>
-              <p style='margin:20px 20px;' class="card-text">
+              <textarea class="form-control" name=comment_content id="exampleFormControlTextarea1" rows="5">
                 <%=item.product_description%>
-              </p>
+              </textarea>
               <form>
-                <input type=text class="form-control col-6" name=amount value=1>
+                <input readonly type=text name=amount value=1>
                 <input type=button value="증가" 
                 onClick="javascript:this.form.amount.value++;                
                 javascript:this.form.hidden_restmileage.value= 1*this.form.hidden_restmileage.value- 1*this.form.price.value;
@@ -51,16 +51,18 @@
                 javascript:if(this.form.amount.value==0)this.form.amount.value=1;
                 javascript:this.form.hidden_restmileage.value= 1*this.form.hidden_nowmileage.value- 1*this.form.amount.value*1*this.form.hidden_price.value;
                 javascript:this.form.restmileage.value='구매 후 마일리지: ' +this.form.hidden_restmileage.value;">
+                <br/>
                 <input type=hidden name=price value=<%=item.product_price%>>
                 <input type=hidden class="form-control col-6" name=hidden_nowmileage rows="1" value = "<%=u_mileage%>">
                 <input type=hidden class="form-control col-6" name=hidden_price rows="1" value = "<%=item.product_price%>">
-                <input type=text class="form-control col-6" name=nowmileage rows="1" value = "현재 마일리지: <%=u_mileage%>">
-                <input type=hidden class="form-control col-6" name =hidden_restmileage rows="1" value = "<%=u_mileage - item.product_price%>">
-                <input type=text class="form-control col-6" name =restmileage rows="1" value = "구매 후 마일리지: <%=u_mileage - item.product_price%>">
+                <input readonly type=text size="30" name=nowmileage rows="1" value = "현재 마일리지: <%=u_mileage%>">
+                <br/>
+                <input type=hidden  class="form-control col-6" name =hidden_restmileage rows="1" value = "<%=u_mileage - item.product_price%>">
+                <input readonly type=text size="30" name =restmileage rows="1" value = "구매 후 마일리지: <%=u_mileage - item.product_price%>">
 
             </form>
             <!--서버에 제출용-->
-              <div class="form-group">
+              <div class="form-group" >
                 <input name="p_name" value="<%=item.product_number%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
                 <input name="p_price" value="<%=item.product_price%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />
                 <input name="u_mileage" value="<%=u_mileage%>" id="username-email" placeholder="E-mail" type="hidden" class="form-control" />

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+<br /><br /><br />
+<p>
+<div class="container">
+    <!-- container class 가 페이지의 컨텐츠영역을 지정 -->
+
+        <!--이상하게 이거 없으면 get으로 보내짐 질문할것-->
+        <form accept-charset="UTF-8" role="form" method="post" action="/users/auth">
+        </form>
+
+    <h5> <%= product_name %></h5>
+    <!--평균평점출력-->
+    <div class='RatingStar'>
+        <div class='RatingScore'>
+            <div class='outer-star'>
+                <div class='inner-star'></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .inner-star::before {
+            color: #FF9600;
+        }
+
+        .outer-star {
+            position: relative;
+            display: inline-block;
+            color: #CCCCCC;
+        }
+
+        .inner-star {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .outer-star::before,
+        .inner-star::before {
+            content: '\f005 \f005 \f005 \f005 \f005';
+            font-family: 'Font Awesome 5 free';
+            font-weight: 900;
+        }
+    </style>
+
+    <input type="hidden" id="averagerating" value = <%= average_rating %>>
+    <script>
+        var average = document.getElementById('averagerating').value;
+        ratings = { RatingScore: average }
+        totalRating = 5; table = document.querySelector('.RatingStar'); function rateIt() { for (rating in ratings) { ratingPercentage = ratings[rating] / totalRating * 100; ratingRounded = Math.round(ratingPercentage / 10) * 10 + '%'; star = table.querySelector(`.${rating} .inner-star`); numberRating = table.querySelector(`.${rating} .numberRating`); star.style.width = ratingRounded; numberRating.innerText = ratings[rating]; } } rateIt()
+    </script>
+
+    <h5> <%= average_rating %></h5>
+
+    <div>
+        <br /><br />
+
+        <% prodata2.forEach(function (item, index) { %>
+            <form name=join onsubmit="return validate()" method="post" action = "/adminprod/putcomment">
+                <div class="form-group">
+            <input type="hidden" id = "productid" name = productid value= "<%= product_id %>">
+            <input type="hidden" id = "comment_number" name = comment_number value= "<%= item.comment_number %>">
+        </div>
+            <h5 id="u_id">
+                <%= item.user_id %>
+            </h5>
+            <div class="form-group">
+            <!--별점 출력-->
+            <h5 style="display:inline;" id="u_rate">
+                <% for(var i=0; i < item.comment_rating; i++){ %>
+                    ★
+                    <% } %>
+                        <% for(var i=0; i < 5-item.comment_rating; i++){ %>
+                            ☆
+                            <% } %>
+            </h5>
+            <button type="submit" style="float: right;" class="btn btn-danger" formaction="/adminprod/putcomment">댓글삭제</button>
+            </div>
+            <textarea readonly class="form-control" id="exampleFormControlTextarea1"
+                rows="3"><%= item.comment_contents %></textarea>
+            <br />
+        </form>
+            <% }); %>
+
+    </div>
+</div> <!-- /.container -->
+
+<!-- 드롭다운리스트에서 별점 바꾸면 바꾼게 반영되서 브라우져에 출력 -->
+<script>
+    $('#example .dropdown-menu li > a').bind('click', function (e) {
+        var html = $(this).html();
+        $('#example button.dropdown-toggle').html(html + ' <span class="caret"></span>');
+        //드롭다운리스트에서 값 가져와서 rate_value에 별점 몇점인지 넣음
+        $('input[name="rate_value"]').val($(this).parent('li').val());
+
+
+    });
+</script>

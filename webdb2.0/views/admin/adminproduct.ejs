@@ -18,6 +18,18 @@
 
     <div>
 
+      <div class="dropdown"> 
+
+        <button   class="btn  btn-dark  dropdown-toggle float-right"   data-toggle="dropdown"> 
+          평점순 정렬 
+        </button> 
+        <div class="dropdown-menu"> 
+                 <a class="dropdown-item"  href="/adminprod/list?sort=rating">평점순 정렬</a> 
+                 <a class="dropdown-item"  href="/adminprod/list?sort=sell">매출순 정렬</a> 
+                 <a class="dropdown-item"  href="/adminprod/list?sort=stock">재고량별 정렬</a> 
+        </div> 
+</div> 
+</div> 
 
       <form action="/adminprod/list" method="get">
         <select id="browsers" name="sort">
@@ -34,8 +46,9 @@
 
     <hr>
     <div class="container">
-      <a class="btn btn-default" href="/adminprod/form">+신규등록</a>
-      <a class="btn btn-default" id="putp" href="/adminprod/list" +>±상품수정및 삭제</a>
+      <a class="btn btn-success" href="/adminprod/form">+신규등록</a>
+      <a class="btn btn-primary" id="putp" href="/adminprod/list" +>±상품수정및 삭제</a>
+      <a class="btn btn-info" id="putc" href="/adminprod/list" +>상품별 댓글관리</a>
 
         
       <table class="table table-striped" id="producttable">
@@ -49,6 +62,7 @@
             <th> 등록일 </th>
             <th> 판매가 </th>
             <th> 재고량 </th>
+            <th> 매출 </th>
           </tr>
         </thead>
         <tbody id="producttbody">
@@ -56,7 +70,7 @@
             <tr>
               <td><%= item.product_number %></td>
               <td>
-                <%= item.product_category %>
+                <%= item.product_category%>
               </td>
               <td>
                 <%= item.product_company %>
@@ -75,6 +89,9 @@
               </td>
               <td>
                 <%= item.product_stock %>
+              </td>
+              <td>
+                <%= item.cell %>
               </td>
             </tr>
             <% }); %>
@@ -98,6 +115,7 @@
         //get으로 보낼 테이블의 값 가져옴
         var selectedproduct = td.eq(0).text();
         $("#putp").attr("href", "/adminprod/putproductform/?productid='" + selectedproduct + "'");
+        $("#putc").attr("href", "/adminprod/putcomment/?productid='" + selectedproduct + "'");
       
 
       });

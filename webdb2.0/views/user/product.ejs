@@ -1,84 +1,125 @@
 <!DOCTYPE html>
- <!--  Content (배너이미지) 부분 -->
-  <div> <img src="/images/banner1.png" class="img-fluid" alt="배너이미지" width="100%"> </div>
+<!--  Content (배너이미지) 부분 -->
+<div> <img src="/images/banner1.png" class="img-fluid" alt="배너이미지" width="100%"> </div>
 
-  <!-- 컨텐츠(예, 쇼핑몰일경우 판매제품리스트)헤더부분 -->
-   <div class="container-fluid" style="border: solid 20px white; border-radius: 1px">
-     <div class="panel panel-default">
-   	  <div class="panel-heading">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">쇼핑몰</a></li>
-            <li class="breadcrumb-item"><%= category %> </a></li>
-          </ol>
-        </nav>
-   	  </div>
+<!-- 컨텐츠(예, 쇼핑몰일경우 판매제품리스트)헤더부분 -->
+<div class="container-fluid" style="border: solid 20px white; border-radius: 1px">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">쇼핑몰</a></li>
+          <li class="breadcrumb-item">
+            <%= category %> </a>
+          </li>
+        </ol>
+      </nav>
+    </div>
 
-      <hr>
-      <div class="container">
-       <div class="row align-items-start">
-        <% prodata.forEach(function (item, index) { %>
-          <div class=col-4>
+    <div class="dropdown">
 
-         <div class="card border-primary mb-3" style="max-width: 18rem; max-height: 26rem">
-            <div class="card-header bg-transparent border-primary"><strong><%= item.product_name %> </strong> <small> [<%= item.product_company %>] </small></div>
-            <div class="card-body text-primary">
-                <div> <img class="img-fluid" src=<%=item.product_imgpath %> > </div>
-           <p class="card-text">좋은상품입니다
-            </div>
-            <div class="card-footer bg-transparent"><%= item.product_price %>원 &nbsp;&nbsp;&nbsp;&nbsp;<%= item.product_modelname %> </div>
-            <div class="card-footer bg-transparent"><a href = "/product/detailpage/?productid='<%= item.product_number %>' "><button type=button class="btn btn-primary">구매하기</button></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </div>
-          </div>
-
-          </div>
-       <% }); %>
+      <button class="btn  btn-primary  dropdown-toggle" data-toggle="dropdown">
+        이름순 정렬
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="/product/list/?category=<%= category_name %>&sort=namesort">이름순 정렬</a>
+        <a class="dropdown-item" href="/product/list/?category=<%= category_name %>&sort=ratesort">평점순 정렬</a>
       </div>
     </div>
 
-  <p>
-  <nav aria-label="...">
-  <ul class="pagination justify-content-center">
-    <% var a=1; if(page == 1){%> <!--첫페이지에서 뒤로 안넘어감-->
-    <li class="page-item">
-      <% if(category == '상품검색') {%> <!--키워드검색일때 Previous하이퍼링크-->
-      <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= a %>">Previous</a>
-      <% }if(key ==undefined) {%> <!--카테고리검색일때 Previous하이퍼링크-->
-      <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= a %>">Previous</a>
-      <% }} %>
-      <% if(page != 1) {%> <!--페이지 1일때 뒤로 넘어가 0 되는일 방지-->
-      <% if(category == '상품검색') {%> <!--키워드검색일때 Previous하이퍼링크-->
-        <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= page-1 %>">Previous</a>
-        <% }if(key ==undefined) {%> <!--카테고리검색일때 Previous하이퍼링크-->
-        <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= page-1 %>">Previous</a>
-        <% }} %>
-    </li>
-    <!--페이지네이션-->
-    <% for(var i = 1; i <= total_page; i++){ %>
-      <% if(category == '상품검색') {%> <!--키워드검색-->
-        <% if(page == i){ %> <!--현재페이지에 active효과 추가-->
-    <li class="page-item active" aria-current="page"><a class="page-link" 
-      href="/product/list?keyword=<%= key %>&page=<%= i %>"><%= i %></a></li>
-      <% }else {%>
-      <li class="page-item"><a class="page-link" 
-        href="/product/list?keyword=<%= key %>&page=<%= i %>"><%= i %></a></li>
+    <hr>
+    <div class="container">
+      <div class="row align-items-center">
+        <% prodata.forEach(function (item, index) { %>
+          <div class="col-4">
 
-      <% }}if(key ==undefined) {%> <!--카테고리검색-->
-        <% if(page == i){ %> <!--현재페이지에 active효과 추가-->
-        <li class="page-item active" aria-current="page"><a class="page-link" 
-          href="/product/list?category=<%= category_name %>&page=<%= i %>"><%= i %></a></li>
-          <% }else {%>
-      <li class="page-item"><a class="page-link" 
-        href="/product/list?category=<%= category_name %>&page=<%= i %>"><%= i %></a></li>
-    <% }}} %>
-    
-    <li class="page-item">
-      <% if(page == total_page) page-- %> <!--마지막페이지에서next안넘어감-->
-      <% if(category == '상품검색') {%> <!--키워드검색일때 next하이퍼링크-->
-      <a class="page-link" href="/product/list?keyword=<%= key %>&page=<%= 1*page+1 %>">Next</a>
-      <% }if(key ==undefined) {%> <!--카테고리검색일때 next하이퍼링크-->
-      <a class="page-link" href="/product/list?category=<%= category_name %>&page=<%= (1*page)+1 %>">Next</a>
-      <% } %>
-    </li>
-  </ul>
-</nav>
+            <div class="card border-primary text-center mb-3" style="max-width: 18rem; max-height: 26rem">
+              <div class="card-header bg-transparent border-primary"><strong>
+                  <%= item.product_name %>
+                </strong> <small> [<%= item.product_company %>] </small></div>
+              <div class="card-body text-primary">
+                <div> <img width="200px" height="200px" src=<%=item.product_imgpath %> > </div>
+              </div>
+              <div class="card-footer bg-transparent">
+                <%= item.product_price %>원 &nbsp;&nbsp;&nbsp;&nbsp;<%= item.product_modelname %>
+              </div>
+              <div class="card-footer bg-transparent"><a
+                  href="/product/detailpage/?productid='<%= item.product_number %>' "><button type=button
+                    class="btn btn-primary">구매하기</button></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </div>
+            </div>
+
+          </div>
+          <% }); %>
+      </div>
+    </div>
+
+    <p>
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <% var a=1; if(page==1){%>
+          <!--첫페이지에서 뒤로 안넘어감-->
+          <li class="page-item">
+            <% if(category=='상품검색' ) {%>
+              <!--키워드검색일때 Previous하이퍼링크-->
+              <a class="page-link" href="/product/list?keyword=<%= key %>&sort=<%= sort %>&page=<%= a %>">Previous</a>
+              <% }if(key==undefined) {%>
+                <!--카테고리검색일때 Previous하이퍼링크-->
+                <a class="page-link" href="/product/list?category=<%= category_name %>&sort=<%= sort %>&page=<%= a %>">Previous</a>
+                <% }} %>
+                  <% if(page !=1) {%>
+                    <!--페이지 1일때 뒤로 넘어가 0 되는일 방지-->
+                    <% if(category=='상품검색' ) {%>
+                      <!--키워드검색일때 Previous하이퍼링크-->
+                      <a class="page-link" href="/product/list?keyword=<%= key %>&sort=<%= sort %>&page=<%= page-1 %>">Previous</a>
+                      <% }if(key==undefined) {%>
+                        <!--카테고리검색일때 Previous하이퍼링크-->
+                        <a class="page-link"
+                          href="/product/list?category=<%= category_name %>&sort=<%= sort %>&page=<%= page-1 %>">Previous</a>
+                        <% }} %>
+          </li>
+          <!--페이지네이션-->
+          <% for(var i=1; i <=total_page; i++){ %>
+            <% if(category=='상품검색' ) {%>
+              <!--키워드검색-->
+              <% if(page==i){ %>
+                <!--현재페이지에 active효과 추가-->
+                <li class="page-item active" aria-current="page"><a class="page-link"
+                    href="/product/list?keyword=<%= key %>&sort=<%= sort %>&page=<%= i %>">
+                    <%= i %>
+                  </a></li>
+                <% }else {%>
+                  <li class="page-item"><a class="page-link" href="/product/list?keyword=<%= key %>&sort=<%= sort %>&page=<%= i %>">
+                      <%= i %>
+                    </a></li>
+
+                  <% }}if(key==undefined) {%>
+                    <!--카테고리검색-->
+                    <% if(page==i){ %>
+                      <!--현재페이지에 active효과 추가-->
+                      <li class="page-item active" aria-current="page"><a class="page-link"
+                          href="/product/list?category=<%= category_name %>&sort=<%= sort %>&page=<%= i %>">
+                          <%= i %>
+                        </a></li>
+                      <% }else {%>
+                        <li class="page-item"><a class="page-link"
+                            href="/product/list?category=<%= category_name %>&sort=<%= sort %>&page=<%= i %>">
+                            <%= i %>
+                          </a></li>
+                        <% }}} %>
+
+                          <li class="page-item">
+                            <% if(page==total_page) page-- %>
+                              <!--마지막페이지에서next안넘어감-->
+                              <% if(category=='상품검색' ) {%>
+                                <!--키워드검색일때 next하이퍼링크-->
+                                <a class="page-link"
+                                  href="/product/list?keyword=<%= key %>&sort=<%= sort %>&page=<%= 1*page+1 %>">Next</a>
+                                <% }if(key==undefined) {%>
+                                  <!--카테고리검색일때 next하이퍼링크-->
+                                  <a class="page-link"
+                                    href="/product/list?category=<%= category_name %>&sort=<%= sort %>&page=<%= (1*page)+1 %>">Next</a>
+                                  <% } %>
+                          </li>
+      </ul>
+    </nav>

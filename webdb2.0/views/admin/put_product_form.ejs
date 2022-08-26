@@ -30,14 +30,7 @@
    <form name=join onsubmit="return validate()" method=post enctype="multipart/form-data">
         <div class="form-group">
          <label for="exampleFormControlSelect1">상품분류</label>
-          <select class="form-control" id="exampleFormControlSelect1" name="category">
-            <option id = "sun">선풍기</option>
-            <option id = "air">에어컨</option>
-            <option id = "cold">냉풍기</option>
-            <option id = "mini">미니선풍기</option>
-            <option id = "nang">냉장고</option>
-            <option id = "yul">얼풍기</option>
-          </select>
+          <input readonly type = "text" class="form-control" id="exampleFormControlSelect1" name="category" value="<%=item.product_category%>">
        </div>
        <div class="form-group">
          <label for="exampleInputEmail1">상품번호</label>
@@ -87,11 +80,12 @@
     <label for="exampleInputEmail1">상세설명</label>
     <input style="height: 20em;" type="text" class="form-control " name="description" id="description" value="<%=item.product_description%>">
   </div>
-
+<div style="text-align: center;">
          <hr>
          <button type="submit" class="btn btn-primary" formaction="/adminprod/putproduct">상품수정</button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <button type="submit" class="btn btn-info" formaction="/adminprod/deleteproduct">상품삭제</button>
-         
+        </div>
       </form>
       <% }); %>
      </div>
